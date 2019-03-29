@@ -3,6 +3,7 @@ import re
 import time
 from string import ascii_lowercase
 import os
+from SweeperAgent import SweeperAgent
 
 
 
@@ -159,6 +160,7 @@ def playgame():
     while True:
         
         minesleft = numberofmines - len(flags)
+        SweeperAgent(currgrid)
         # í staðinn fyrir að pormpta user fyrir input þá köllum við á agent með borðið og mines left sem argument 
         prompt = input('Enter the cell ({} mines left): '.format(minesleft))
         result = parseinput(prompt, gridsize, helpmessage + '\n')
