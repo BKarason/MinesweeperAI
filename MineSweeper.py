@@ -210,8 +210,7 @@ def playgame():
                 minutes, seconds = divmod(int(time.time() - starttime), 60)
                 print(
                     'You Win. '
-                    'It took you {} minutes and {} seconds.\n'.format(minutes,
-                                                                      seconds))
+                    'It took you {} minutes and {} seconds.\n'.format(minutes, seconds))
                 showgrid(grid)
                 if playagain():
                     playgame()
