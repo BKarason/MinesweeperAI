@@ -122,7 +122,7 @@ def parseinput(inputstring, gridsize, helpmessage):
     flag = False
     message = "Invalid cell. " + helpmessage
 
-    pattern = r'([a-{}])([0-9]+)(f?)'.format(ascii_lowercase[gridsize - 1])
+    pattern = r'([0-9]+)\,([0-9]+)(f?)'.format(ascii_lowercase[gridsize - 1])
     validinput = re.match(pattern, inputstring)
 
     if inputstring == 'help':
@@ -130,7 +130,7 @@ def parseinput(inputstring, gridsize, helpmessage):
 
     elif validinput:
         rowno = int(validinput.group(2)) - 1
-        colno = ascii_lowercase.index(validinput.group(1))
+        colno = int(validinput.group(1)) - 1
         flag = bool(validinput.group(3))
 
         if -1 < rowno < gridsize:
