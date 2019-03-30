@@ -11,6 +11,6 @@ def SweeperAgent(grid):
         a = random.randint(0, len(grid) - 1)
         b = random.randint(0, len(grid) - 1)
         print(a, b)
-        print(letters[a] + str(b))
+        return letters[a] + str(b)
     #print('First move:', firstMove)
 
