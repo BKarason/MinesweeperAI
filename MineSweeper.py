@@ -160,12 +160,13 @@ def playgame():
     while True:
         
         minesleft = numberofmines - len(flags)
-        #print(SweeperAgent(currgrid))
+        svar = SweeperAgent(currgrid)
+        print(svar)
         # í staðinn fyrir að pormpta user fyrir input þá köllum við á agent með borðið og mines left sem argument 
-        prompt = SweeperAgent(currgrid)#input('Enter the cell ({} mines left): '.format(minesleft))
-        print(prompt)
+        prompt = input('Enter the cell ({} mines left): '.format(minesleft))
+        
         result = parseinput(prompt, gridsize, helpmessage + '\n')
-
+        
         message = result['message']
         cell = result['cell']
 
@@ -218,7 +219,7 @@ def playgame():
                 if playagain():
                     playgame()
                 return
-        clear()
+        #clear()
         showgrid(currgrid)
         print(message)
         
