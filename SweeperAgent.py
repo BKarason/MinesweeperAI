@@ -50,6 +50,13 @@ def SweeperAgent(grid):
                         x = letters[svar[1]]
                         y = svar[0]+1
                         print(x,y,"f")
+                    if int(grid[i][j]) == numberOfEmpty + numberOfFlags :
+                        svar = findEmpty(i,j)
+                        if(svar != "none"):
+                            x = letters[svar[1]]
+                            y = svar[0]+1
+                            svarid = str(x) + str(y) + "f"
+                            return svarid
     a = random.randint(0, len(grid) - 1)
     b = random.randint(1, len(grid))
     bla = letters[a] + str(b)
