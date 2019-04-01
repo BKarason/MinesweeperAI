@@ -142,8 +142,8 @@ def parseinput(inputstring, gridsize, helpmessage):
 
 def playgame():
     clear = lambda: os.system('cls')
-    gridsize = 9
-    numberofmines = 10
+    gridsize = 12
+    numberofmines = 15
     currgrid = [[' ' for i in range(gridsize)] for i in range(gridsize)]
     agent = SweeperAgent(currgrid, numberofmines)
     grid = []
@@ -218,7 +218,7 @@ def playgame():
                 if playagain():
                     playgame()
                 return
-        clear()
+        #clear()
         showgrid(currgrid)
         print(message)
         
