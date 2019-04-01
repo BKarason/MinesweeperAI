@@ -114,7 +114,7 @@ class SweeperAgent:
                 # if a tile is set to -1 it means that we know that there is not a mine there
 
                 numberOfFlags = self.numberOfTilesAround(i,j, 'F')
-                numberOfEmpty = self.numberOfTilesAround(i,j, '-1')
+                numberOfEmpty = self.numberOfTilesAround(i,j, 'E')
                 if(numberOfFlags > int(self.board[i][j])):
                     #print("number of flags", numberOfFlags, "number on tile, ", self.board[i][j])
                     return
