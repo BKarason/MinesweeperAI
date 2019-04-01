@@ -55,6 +55,7 @@ class SweeperAgent:
                     flagCount += 1
                     continue
                 if self.board[i][j] == ' ': continue
+                if self.board[i][j] == 'E': continue
                 
                 surround = 0
                 if (i is 0 and j is 0) or (i is len(self.board) - 1 and j is len(self.board) - 1):
@@ -64,10 +65,12 @@ class SweeperAgent:
                 else: surround = 8
                 
                 # if a tile is set to -1 it means that we know that there is not a mine there
-                numberOfEmpty = self.numberOfTilesAround(i,j, '-1')
+
                 numberOfFlags = self.numberOfTilesAround(i,j, 'F')
-                
-                if(numberOfFlags > int(self.board[i][j])): return
+                numberOfEmpty = self.numberOfTilesAround(i,j, '-1')
+                if(numberOfFlags > int(self.board[i][j])):
+                    print("number of flags", numberOfFlags, "number on tile, ", self.board[i][j])
+                    return
                 
                 # ekki hundrað á hvað þessi gerir
                 if(surround - numberOfEmpty < int(self.board[i][j])): return
@@ -75,7 +78,7 @@ class SweeperAgent:
         if flagCount > self.bombs: return
 
         if k == len(tileList):
-            print("komst hingad 2")
+           # print("komst hingad 2")
             if flagCount < self.bombs: return
             
             solution = []
@@ -87,20 +90,26 @@ class SweeperAgent:
             # þarf örugglega að núll stilla tank solutions eftir hvert sector
             print(solution)
             self.tankSolutions.append(solution)
+            return
         
         currTileI = tileList[k][0]
         currTileJ = tileList[k][1]
+        #print(currTileI,currTileJ)
+        #print(tileList[k])
 
         #print("komst hingad")
 
         self.board[currTileI][currTileJ] = 'F'
+        #print(self.board[currTileI][currTileJ])
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
+        #print(self.board[currTileI][currTileJ])
 
-        self.board[currTileI][currTileJ] = '-1'
+        
+        self.board[currTileI][currTileJ] = 'E'
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
-
+#        print("komst hingad")
 
     def boundryTile(self, col, row):
         numbers = ['1','2','3','4','5','6','7','8']
