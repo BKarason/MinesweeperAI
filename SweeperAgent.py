@@ -10,6 +10,8 @@ class SweeperAgent:
     def updateBoard(self,board):
         self.board = board
 
+    def tankSolver(self):
+        
 
     def numberOfTilesAround(self,col, row, val):
         numberOfEmpty = 0
