@@ -61,16 +61,24 @@ class SweeperAgent:
                     surround = 3
                 elif i is 0 or j is 0 or i is len(self.board) - 1 or j is len(self.board) - 1:
                     surround = 5
-                else: surround = 8
+                else:
+                    surround = 8
                 
                 # if a tile is set to -1 it means that we know that there is not a mine there
                 numberOfEmpty = self.numberOfTilesAround(i,j, '-1')
                 numberOfFlags = self.numberOfTilesAround(i,j, 'F')
+                numberOfTiles = self.numberOfTilesAround(i,j, ' ')
                 
-                if(numberOfFlags > int(self.board[i][j])): return
+
+                
+                if(numberOfFlags > int(self.board[i][j])): 
+                    print("number of flags: ",numberOfFlags)
+                    print("number of empty around: ",numberOfTiles)
+                    return
                 
                 # ekki hundrað á hvað þessi gerir
-                if(surround - numberOfEmpty < int(self.board[i][j])): return
+                if(surround - numberOfEmpty < int(self.board[i][j])):
+                    return
             
         if flagCount > self.bombs: return
 
