@@ -81,15 +81,15 @@ class SweeperAgent:
                     # returna streng til þess að flagga þennan reit
                     x = self.letters[currTileJ]
                     y = currTileI + 1
-                    svarid = str(x) + str(y) + "f"
-                    return svarid
+                    answer = str(x) + str(y) + "f"
+                    return answer
                 
                 if emptyInAllSolutions :
                     # returna streng til þess að velja þennan reit
                     x = self.letters[currTileJ]
                     y = currTileI + 1
-                    svarid = str(x) + str(y)
-                    return svarid 
+                    answer = str(x) + str(y)
+                    return answer 
 
             # since there are no guaranteed solutions we calculate the highest propabilitiy
             highestEmptyRate = -10000
@@ -119,9 +119,9 @@ class SweeperAgent:
         j = self.segregations[prob_Best_s][prob_BestTile][1]
         x = self.letters[j]
         y = i + 1
-        svarid = str(x) + str(y)
-        #print(svarid)
-        return svarid
+        answer = str(x) + str(y)
+
+        return answer
 
 
     def tankSegregate(self, borderTileList):
@@ -287,25 +287,25 @@ class SweeperAgent:
                         numberOfEmpty = self.numberOfTilesAround(i,j, ' ')
                         numberOfFlags = self.numberOfTilesAround(i,j, 'F')
                         if int(self.board[i][j]) == numberOfFlags:
-                            svar = self.findEmpty(i,j)
-                            if(svar != "none"):
-                                x = self.letters[svar[1]]
-                                y = svar[0]+1
-                                svarid = str(x) + str(y)
-                                return svarid
+                            ans = self.findEmpty(i,j)
+                            if(ans != "none"):
+                                x = self.letters[ans[1]]
+                                y = ans[0]+1
+                                answer = str(x) + str(y)
+                                return answer
                         if int(self.board[i][j]) == numberOfEmpty and numberOfEmpty == 1:
-                            svar = self.findEmpty(i,j)
-                            x = self.letters[svar[1]]
-                            y = svar[0]+1
-                            svarid = str(x) + str(y) + "f"
-                            return svarid
+                            ans = self.findEmpty(i,j)
+                            x = self.letters[ans[1]]
+                            y = ans[0]+1
+                            answer = str(x) + str(y) + "f"
+                            return answer
                         if int(self.board[i][j]) == numberOfEmpty + numberOfFlags :
-                            svar = self.findEmpty(i,j)
-                            if(svar != "none"):
-                                x = self.letters[svar[1]]
-                                y = svar[0]+1
-                                svarid = str(x) + str(y) + "f"
-                                return svarid
+                            ans = self.findEmpty(i,j)
+                            if(ans != "none"):
+                                x = self.letters[ans[1]]
+                                y = ans[0]+1
+                                answer = str(x) + str(y) + "f"
+                                return answer
         return self.tankSolver()
         print("fann ekki lausn ")
 

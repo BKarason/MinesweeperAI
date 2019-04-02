@@ -142,7 +142,7 @@ def parseinput(inputstring, gridsize, helpmessage):
 
 wins = 0
 losses = 0
-def playgame(i):
+def playgame(playCount):
     global wins
     global losses
     clear = lambda: os.system('cls')
@@ -203,8 +203,8 @@ def playgame(i):
                 print('Game Over')
                 showgrid(grid)
                 # change next line for more or less runs
-                if i != 9:
-                    playgame(i+1)
+                if playCount != 99:
+                    playgame(playCount+1)
                 return
 
             elif currcell == ' ':
@@ -221,8 +221,8 @@ def playgame(i):
                     print("notaði tank solver")
                 showgrid(grid)
                 # change next line for more or less runs
-                if i != 9:
-                    playgame(i+1)
+                if playCount != 99:
+                    playgame(playCount+1)
                 return
         clear()
         showgrid(currgrid)
