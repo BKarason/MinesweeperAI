@@ -11,11 +11,16 @@ class SweeperAgent:
         self.segregations = []
         self.segregate = False
         self.bruteForceLimit = 8
+        self.tankSolverUsed = False
+
+    def getTankSolver(self):
+        return self.tankSolverUsed
 
     def updateBoard(self,board):
         self.board = board
 
     def tankSolver(self):
+        self.tankSolverUsed = True
         # núll stillum segregate, og tile lista
         self.segregate = False
         borderTiles = []
@@ -40,7 +45,8 @@ class SweeperAgent:
             self.segregations.append(emptyTiles)
         else:
             self.segregations = self.tankSegregate(borderTiles)
-        print(len(self.segregations))
+        #print("nr of segregations:")
+        #print(len(self.segregations))
 
         # ennþá ekki hundrað hvað total mult cases gerir
         highestProbability = 0.0

@@ -140,11 +140,10 @@ def parseinput(inputstring, gridsize, helpmessage):
 
     return {'cell': cell, 'flag': flag, 'message': message}
 
-
-def playgame():
+def playgame(i):
     clear = lambda: os.system('cls')
-    gridsize = 22
-    numberofmines = 99
+    gridsize = 16
+    numberofmines = 40
     currgrid = [[' ' for i in range(gridsize)] for i in range(gridsize)]
     agent = SweeperAgent(currgrid, numberofmines)
     grid = []
@@ -198,10 +197,10 @@ def playgame():
                 message = 'There is a flag there'
 
             elif grid[rowno][colno] == 'X':
-                print('Game Over\n')
+                print('Game Over')
                 showgrid(grid)
-                if playagain():
-                    playgame()
+                if i != 100:
+                    playgame(i+1)
                 return
 
             elif currcell == ' ':
@@ -214,14 +213,17 @@ def playgame():
                 minutes, seconds = divmod(int(time.time() - starttime), 60)
                 print(
                     'You Win. '
-                    'It took you {} minutes and {} seconds.\n'.format(minutes, seconds))
+                    'It took you {} minutes and {} seconds.'.format(minutes, seconds))
+                usedTank = agent.getTankSolver()
+                if usedTank:
+                    print("notaði tank solver")
                 showgrid(grid)
-                if playagain():
-                    playgame()
+                if i != 100:
+                    playgame(i+1)
                 return
         #clear()
         showgrid(currgrid)
         print(message)
         
 
-playgame()
+playgame(0)
