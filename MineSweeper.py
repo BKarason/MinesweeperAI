@@ -152,7 +152,6 @@ def playgame(i):
     agent = SweeperAgent(currgrid, numberofmines)
     grid = []
     flags = []
-    starttime = 0
 
     helpmessage = ("Type the column followed by the row (eg. a5). "
                    "To put or remove a flag, add 'f' to the cell (eg. a5f).")
@@ -203,7 +202,8 @@ def playgame(i):
                 losses += 1
                 print('Game Over')
                 showgrid(grid)
-                if i != 4:
+                # change next line for more or less runs
+                if i != 9:
                     playgame(i+1)
                 return
 
@@ -215,16 +215,16 @@ def playgame(i):
 
             if set(flags) == set(mines):
                 wins += 1
-                minutes, seconds = divmod(int(time.time() - starttime), 60)
                 print('You Win. ')
                 usedTank = agent.getTankSolver()
                 if usedTank:
                     print("notaði tank solver")
                 showgrid(grid)
-                if i != 4:
+                # change next line for more or less runs
+                if i != 9:
                     playgame(i+1)
                 return
-        #clear()
+        clear()
         showgrid(currgrid)
         print(message)
         
