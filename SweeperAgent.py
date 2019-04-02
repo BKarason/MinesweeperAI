@@ -48,7 +48,6 @@ class SweeperAgent:
         #print("nr of segregations:")
         #print(len(self.segregations))
 
-        # ennþá ekki hundrað hvað total mult cases gerir
         highestProbability = 0.0
         prob_BestTile = -1 
         prob_Best_s = -1 
@@ -65,7 +64,6 @@ class SweeperAgent:
 
             # fundum engar lausnir fyrir þetta segregation
             if len(self.tankSolutions) == 0: 
-                if(len(self.segregations == 1)): "engin lausn fundin og engin fleiri segregations"
                 continue
 
             for i in range(len(self.segregations[s])):
@@ -94,7 +92,7 @@ class SweeperAgent:
                     return svarid 
 
             # since there are no guaranteed solutions we calculate the highest propabilitiy
-            highestEmptyRate = -1000
+            highestEmptyRate = -10000
             tileWithHighestEmptyRate = -1
             for i in range(len(self.segregations[s])):
                 tileEmptyRate = 0
@@ -111,7 +109,7 @@ class SweeperAgent:
                 prob_BestTile = tileWithHighestEmptyRate
                 prob_Best_s = s
         
-        if self.bruteForceLimit == 8 and nonBorderTiles <= 13:
+        if self.bruteForceLimit == 8 and nonBorderTiles > 8 and nonBorderTiles <= 13:
             self.bruteForceLimit = 13
             self.tankSolver()
             self.bruteForceLimit = 8
@@ -122,7 +120,7 @@ class SweeperAgent:
         x = self.letters[j]
         y = i + 1
         svarid = str(x) + str(y)
-        print(svarid)
+        #print(svarid)
         return svarid
 
 
@@ -154,10 +152,10 @@ class SweeperAgent:
                     isConnected = False
 
                     # skif if it's already been assigned to a region
-                    if tile in finishedRegion: continue
+                    if cTile in finishedRegion: continue
                     
                     # ef að þetta tile er hefur meira en 1 tile á milli sín og upprunalega , þá bara continue
-                    if abs(tile[0] - cTile[0]) > 2 or abs(tile[1] - cTile[1]): isConnected = False
+                    if abs(tile[0] - cTile[0]) > 2 or abs(tile[1] - cTile[1]) > 2: isConnected = False
                     
                     isConnected = self.tileSearch(tile,cTile)
 
@@ -187,11 +185,10 @@ class SweeperAgent:
                 if self.board[i][j] == 'F':
                     flagCount += 1
                     continue
-                if self.board[i][j] == ' ': continue
-                if self.board[i][j] == 'E': continue
+                if self.board[i][j] == ' ' or self.board[i][j] == 'E': continue
                 
                 surround = 0
-                if (i is 0 and j is 0) or (i is len(self.board) - 1 and j is len(self.board) - 1):
+                if (i is 0 and j is 0) or (i is len(self.board) - 1 and j is len(self.board) - 1) or (i is 0 and j is len(self.board) - 1) or (i is len(self.board) - 1 and j is 0):
                     surround = 3
                 elif i is 0 or j is 0 or i is len(self.board) - 1 or j is len(self.board) - 1:
                     surround = 5
@@ -201,7 +198,9 @@ class SweeperAgent:
                 # if a tile is set to -1 it means that we know that there is not a mine there
 
                 numberOfFlags = self.numberOfTilesAround(i,j, 'F')
-                numberOfEmpty = self.numberOfTilesAround(i,j, 'E')
+                # kannski ekki numberoftiles(i,j,' ')
+                numberOfEmpty = self.numberOfTilesAround(i,j, 'E') + self.numberOfTilesAround(i,j, ' ')
+                
                 if(numberOfFlags > int(self.board[i][j])):
                     #print("number of flags", numberOfFlags, "number on tile, ", self.board[i][j])
                     return
@@ -308,5 +307,6 @@ class SweeperAgent:
                                 svarid = str(x) + str(y) + "f"
                                 return svarid
         return self.tankSolver()
+        print("fann ekki lausn ")
 
 

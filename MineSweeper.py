@@ -140,7 +140,11 @@ def parseinput(inputstring, gridsize, helpmessage):
 
     return {'cell': cell, 'flag': flag, 'message': message}
 
+wins = 0
+losses = 0
 def playgame(i):
+    global wins
+    global losses
     clear = lambda: os.system('cls')
     gridsize = 16
     numberofmines = 40
@@ -177,8 +181,7 @@ def playgame(i):
 
             if not grid:
                 grid, mines = setupgrid(gridsize, cell, numberofmines)
-            if not starttime:
-                starttime = time.time()
+                
 
             if flag:
                 # Add a flag if the cell is empty
@@ -197,9 +200,10 @@ def playgame(i):
                 message = 'There is a flag there'
 
             elif grid[rowno][colno] == 'X':
+                losses += 1
                 print('Game Over')
                 showgrid(grid)
-                if i != 100:
+                if i != 4:
                     playgame(i+1)
                 return
 
@@ -210,20 +214,24 @@ def playgame(i):
                 message = "That cell is already shown"
 
             if set(flags) == set(mines):
+                wins += 1
                 minutes, seconds = divmod(int(time.time() - starttime), 60)
-                print(
-                    'You Win. '
-                    'It took you {} minutes and {} seconds.'.format(minutes, seconds))
+                print('You Win. ')
                 usedTank = agent.getTankSolver()
                 if usedTank:
                     print("notaði tank solver")
                 showgrid(grid)
-                if i != 100:
+                if i != 4:
                     playgame(i+1)
                 return
         #clear()
         showgrid(currgrid)
         print(message)
         
-
+starttime = time.time()
 playgame(0)
+print("wins : ", wins)
+print("losses : ", losses)
+minutes, seconds = divmod(int(time.time() - starttime), 60)
+print('Time: It took you {} minutes and {} seconds.'.format(minutes, seconds))
+
