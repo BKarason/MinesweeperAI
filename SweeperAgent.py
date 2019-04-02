@@ -8,13 +8,18 @@ class SweeperAgent:
         self.bombs = bombs
         self.tankSolutions = []
         self.letters = string.ascii_lowercase
+        self.segregations = []
+        self.segregate = False
+        self.bruteForceLimit = 8
 
     def updateBoard(self,board):
         self.board = board
 
     def tankSolver(self):
-        borderTiles = [] # listi af x,y túplum?
-        emptyTiles = [] # listi af túplum?
+        # núll stillum segregate, og tile lista
+        self.segregate = False
+        borderTiles = []
+        emptyTiles = [] 
         for i in range(len(self.board)):
             for j in range(len(self.board)):
                 if self.board[i][j] == ' ':
@@ -22,78 +27,153 @@ class SweeperAgent:
                         borderTiles.append((i,j))
                     emptyTiles.append((i,j))
         #print(borderTiles)
-        # ---- hérna kæmi segregation
+        
 
-        totalMultCases = 1
-        success = False
+        nonBorderTiles = len(emptyTiles) - len(borderTiles)
+        # 8 er limit'ið sem að við setjum okkur fyrir brute force
+        if(nonBorderTiles > self.bruteForceLimit): self.segregate = True
+        
+        # núll stillum segregated areas lista
+        self.segregations = []
+        if not self.segregate:
+            #fyrst það eru svo fáar auðar eftir, segregate'um við ekki og setjum bara empty tiles í segregated listann
+            self.segregations.append(emptyTiles)
+        else:
+            self.segregations = self.tankSegregate(borderTiles)
+        print(len(self.segregations))
+
+        # ennþá ekki hundrað hvað total mult cases gerir
         highestProbability = 0.0
-        prob_BestTile = -1 # ekki hundrað hvað þessi gerir
-        prob_Best_s = -1 # ekki þessi heldur
+        prob_BestTile = -1 
+        prob_Best_s = -1 
 
-        # ---- hérna væri loopað í gegnum segregations
 
-        #tankSolutions = [] # boolean fylki
+
+        for s in range(len(self.segregations)):
+
+            # núll stillum tank solutions fyrir hvert segregation
+            self.tankSolutions = []
+
+            # skoða hvort að tank recursive sé ekki alveg pottþétt að skila rétt
+            self.tankRecursive(self.segregations[s],0)
+
+            # fundum engar lausnir fyrir þetta segregation
+            if len(self.tankSolutions) == 0: 
+                if(len(self.segregations == 1)): "engin lausn fundin og engin fleiri segregations"
+                continue
+
+            for i in range(len(self.segregations[s])):
+                mineInAllSolutions = True
+                emptyInAllSolutions = True
+                for solution in self.tankSolutions:
+                    # skoða hvort að þetta séu ekki pottþétt réttar if setningar
+                    if not solution[i]: mineInAllSolutions = False
+                    if solution[i]: emptyInAllSolutions = False
+                
+                currTileI = self.segregations[s][i][0]
+                currTileJ = self.segregations[s][i][1]
+
+                if mineInAllSolutions:
+                    # returna streng til þess að flagga þennan reit
+                    x = self.letters[currTileJ]
+                    y = currTileI + 1
+                    svarid = str(x) + str(y) + "f"
+                    return svarid
+                
+                if emptyInAllSolutions :
+                    # returna streng til þess að velja þennan reit
+                    x = self.letters[currTileJ]
+                    y = currTileI + 1
+                    svarid = str(x) + str(y)
+                    return svarid 
+
+            # since there are no guaranteed solutions we calculate the highest propabilitiy
+            highestEmptyRate = -1000
+            tileWithHighestEmptyRate = -1
+            for i in range(len(self.segregations[s])):
+                tileEmptyRate = 0
+                for solution in self.tankSolutions:
+                    if not solution[i]: tileEmptyRate += 1
+                if tileEmptyRate > highestEmptyRate:
+                    highestEmptyRate = tileEmptyRate
+                    tileWithHighestEmptyRate = i
+
+            probability = float(highestEmptyRate)/float(len(self.tankSolutions))
+            
+            if probability > highestProbability:
+                highestProbability = probability
+                prob_BestTile = tileWithHighestEmptyRate
+                prob_Best_s = s
         
-        # ---- hérna clone'ar hann borðið, veit ekki hvort það þurfi
-
-        # ---- hérna gerir hann tvívítt boolean fylki sem samsvarar borðinu
-        # ---- og setur true ef að reiturinn er tómur og false ef ekki
-
-        # ----- kallar á tankRecurse með fylki af all tiles
-        # núll stillum solution fylkið
-        self.tankSolutions = []
-
-        self.tankRecursive(emptyTiles,0)
-
-        for i in range(len(emptyTiles)):
-            mineInAllSolutions = True
-            emptyInAllSolutions = True
-            for solution in self.tankSolutions:
-                if not solution[i]: mineInAllSolutions = False
-                if solution[i]: emptyInAllSolutions = False
-            
-            currTileI = emptyTiles[i][0]
-            currTileJ = emptyTiles[i][1]
-
-            if mineInAllSolutions:
-                # returna streng til þess að flagga þennan reit
-                x = self.letters[currTileJ]
-                y = currTileI + 1
-                svarid = str(x) + str(y) + "f"
-                return svarid
-            
-            if emptyInAllSolutions :
-                # returna streng til þess að velja þennan reit
-                x = self.letters[currTileJ]
-                y = currTileI + 1
-                svarid = str(x) + str(y)
-                return svarid 
-        totalMultCases = len(self.tankSolutions)
-
-        # since there are no guaranteed solutions we calculate the highest propabilitiy
-        highestEmptyRate = -1000
-        tileWithHighestEmptyRate = -1
-        for i in range(len(emptyTiles)):
-            tileEmptyRate = 0
-            for solution in self.tankSolutions:
-                if not solution[i]: tileEmptyRate += 1
-            if tileEmptyRate > highestEmptyRate:
-                highestEmptyRate = tileEmptyRate
-                tileWithHighestEmptyRate = i
-
-        probability = float(highestEmptyRate)/float(len(self.tankSolutions))
-        currTileI = emptyTiles[tileWithHighestEmptyRate][0]
-        currTileJ = emptyTiles[tileWithHighestEmptyRate][1]
-        x = self.letters[currTileJ]
-        y = currTileI + 1
+        if self.bruteForceLimit == 8 and nonBorderTiles <= 13:
+            self.bruteForceLimit = 13
+            self.tankSolver()
+            self.bruteForceLimit = 8
+        
+        # skilum svarinu með hæstu líkurnar af öllum segregationum
+        i = self.segregations[prob_Best_s][prob_BestTile][0]
+        j = self.segregations[prob_Best_s][prob_BestTile][1]
+        x = self.letters[j]
+        y = i + 1
         svarid = str(x) + str(y)
-        return svarid 
+        print(svarid)
+        return svarid
 
+
+    def tankSegregate(self, borderTileList):
+        allRegions = [] # listi af listum af tiles
+        covered = [] # listi af tiles
+
+        while True :
+            queue = [] # listi af tiles
+            finishedRegion = [] # listi af tiles
+            
+            # find a tile to start a region, and make sure it's not in some other region
+            for tile in borderTileList:
+                if tile not in covered:
+                    queue.append(tile)
+                    break
+            
+            if len(queue) == 0:
+                break
+            
+            while len(queue) > 0:
+                tile = queue.pop()
+
+                finishedRegion.append(tile)
+                covered.append(tile)
+                
+                # find all connecting tiles
+                for cTile in borderTileList:
+                    isConnected = False
+
+                    # skif if it's already been assigned to a region
+                    if tile in finishedRegion: continue
+                    
+                    # ef að þetta tile er hefur meira en 1 tile á milli sín og upprunalega , þá bara continue
+                    if abs(tile[0] - cTile[0]) > 2 or abs(tile[1] - cTile[1]): isConnected = False
+                    
+                    isConnected = self.tileSearch(tile,cTile)
+
+                    if not isConnected: continue
+                    
+                    if cTile not in queue: queue.append(cTile)
+            
+            allRegions.append(finishedRegion)
         
+        return allRegions
+
+
+    def tileSearch(self, tile, cTile):
+
+        for i in range(len(self.board)):
+            for j in range(len(self.board)):
+                if self.board[i][j] != ' ' and self.board[i][j]:
+                    if abs(i - cTile[0]) <= 1 and abs(i - tile[0]) <= 1 and abs(j - cTile[1]) <= 1 and abs(j - tile[1]) <= 1:
+                        return True
+        return False
 
     def tankRecursive(self, tileList, k):
-        #print(len(tileList))
-        #print(k)
         flagCount = 0
         for i in range(len(self.board)):
             for j in range(len(self.board)):
@@ -128,37 +208,29 @@ class SweeperAgent:
 
         if k == len(tileList):
            # print("komst hingad 2")
-            if flagCount < self.bombs: return
+            if flagCount < self.bombs and not self.segregate: return
             
             solution = []
             for item in tileList:
                 #print(item)
                 if self.board[item[0]][item[1]] == 'F': solution.append(True)
                 else: solution.append(False)
-            
-            # þarf örugglega að núll stilla tank solutions eftir hvert sector
-            #print(solution)
             self.tankSolutions.append(solution)
             return
         
         currTileI = tileList[k][0]
         currTileJ = tileList[k][1]
-        #print(currTileI,currTileJ)
-        #print(tileList[k])
 
-        #print("komst hingad")
 
         self.board[currTileI][currTileJ] = 'F'
-        #print(self.board[currTileI][currTileJ])
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
-        #print(self.board[currTileI][currTileJ])
 
         
         self.board[currTileI][currTileJ] = 'E'
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
-#        print("komst hingad")
+
 
     def boundryTile(self, col, row):
         numbers = ['1','2','3','4','5','6','7','8']
@@ -195,7 +267,6 @@ class SweeperAgent:
         return "none"
 
     def getMove(self):
-        guesses = []
         firstMove = True
         for item in itertools.chain.from_iterable(self.board):
             if item is not ' ': firstMove = False
@@ -231,15 +302,5 @@ class SweeperAgent:
                                 svarid = str(x) + str(y) + "f"
                                 return svarid
         return self.tankSolver()
-        #for i in range(len(self.board)):
-        #        for j in range(len(self.board)):
-        #            if self.board[i][j] == ' ':
-        #                x= self.letters[j]
-        #                y= i+1
-        #                guess = str(x) + str(y)
-        #                guesses.append(guess)
-        #a = random.randint(0, len(guesses) - 1)
-        #return guesses[a]
-    
 
 

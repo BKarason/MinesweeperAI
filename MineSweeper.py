@@ -101,6 +101,7 @@ def showcells(grid, currgrid, rowno, colno):
         return
 
     # Show current cell
+
     currgrid[rowno][colno] = grid[rowno][colno]
 
     # Get the neighbors if the cell is empty
@@ -142,8 +143,8 @@ def parseinput(inputstring, gridsize, helpmessage):
 
 def playgame():
     clear = lambda: os.system('cls')
-    gridsize = 12
-    numberofmines = 15
+    gridsize = 22
+    numberofmines = 99
     currgrid = [[' ' for i in range(gridsize)] for i in range(gridsize)]
     agent = SweeperAgent(currgrid, numberofmines)
     grid = []
@@ -161,7 +162,7 @@ def playgame():
         minesleft = numberofmines - len(flags)
         agent.updateBoard(currgrid)
         svar = agent.getMove()
-        # í staðinn fyrir að pormpta user fyrir input þá köllum við á agent með borðið og mines left sem argument 
+        # í staðinn fyrir að pyormpta user fyrir input þá köllum við á agent með borðið og mines left sem argument 
         #prompt = input('Enter the cell ({} mines left): '.format(minesleft))
         
         result = parseinput(svar, gridsize, helpmessage + '\n')
