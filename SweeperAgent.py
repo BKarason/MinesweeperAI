@@ -13,15 +13,10 @@ class SweeperAgent:
         self.bruteForceLimit = 8
         self.tankSolverUsed = False
 
-    def getTankSolver(self):
-        return self.tankSolverUsed
-
     def updateBoard(self,board):
         self.board = board
 
     def tankSolver(self):
-        self.tankSolverUsed = True
-        # núll stillum segregate, og tile lista
         self.segregate = False
         borderTiles = []
         emptyTiles = [] 
@@ -31,22 +26,17 @@ class SweeperAgent:
                     if self.boundryTile(i, j):
                         borderTiles.append((i,j))
                     emptyTiles.append((i,j))
-        #print(borderTiles)
-        
 
         nonBorderTiles = len(emptyTiles) - len(borderTiles)
-        # 8 er limit'ið sem að við setjum okkur fyrir brute force
         if(nonBorderTiles > self.bruteForceLimit): self.segregate = True
         
-        # núll stillum segregated areas lista
+        # segregation list reset
         self.segregations = []
         if not self.segregate:
-            #fyrst það eru svo fáar auðar eftir, segregate'um við ekki og setjum bara empty tiles í segregated listann
+            # since there are so few non border tiles, we brute force the solution
             self.segregations.append(emptyTiles)
         else:
             self.segregations = self.tankSegregate(borderTiles)
-        #print("nr of segregations:")
-        #print(len(self.segregations))
 
         highestProbability = 0.0
         prob_BestTile = -1 
@@ -56,13 +46,12 @@ class SweeperAgent:
 
         for s in range(len(self.segregations)):
 
-            # núll stillum tank solutions fyrir hvert segregation
+            # reset the solutions for each segregation
             self.tankSolutions = []
 
-            # skoða hvort að tank recursive sé ekki alveg pottþétt að skila rétt
             self.tankRecursive(self.segregations[s],0)
 
-            # fundum engar lausnir fyrir þetta segregation
+            # no solutions for this segregation
             if len(self.tankSolutions) == 0: 
                 continue
 
@@ -70,7 +59,6 @@ class SweeperAgent:
                 mineInAllSolutions = True
                 emptyInAllSolutions = True
                 for solution in self.tankSolutions:
-                    # skoða hvort að þetta séu ekki pottþétt réttar if setningar
                     if not solution[i]: mineInAllSolutions = False
                     if solution[i]: emptyInAllSolutions = False
                 
@@ -78,14 +66,12 @@ class SweeperAgent:
                 currTileJ = self.segregations[s][i][1]
 
                 if mineInAllSolutions:
-                    # returna streng til þess að flagga þennan reit
                     x = self.letters[currTileJ]
                     y = currTileI + 1
                     answer = str(x) + str(y) + "f"
                     return answer
                 
                 if emptyInAllSolutions :
-                    # returna streng til þess að velja þennan reit
                     x = self.letters[currTileJ]
                     y = currTileI + 1
                     answer = str(x) + str(y)
@@ -114,7 +100,7 @@ class SweeperAgent:
             self.tankSolver()
             self.bruteForceLimit = 8
         
-        # skilum svarinu með hæstu líkurnar af öllum segregationum
+        # Return answer with the highest propability of being safe
         i = self.segregations[prob_Best_s][prob_BestTile][0]
         j = self.segregations[prob_Best_s][prob_BestTile][1]
         x = self.letters[j]
@@ -125,12 +111,12 @@ class SweeperAgent:
 
 
     def tankSegregate(self, borderTileList):
-        allRegions = [] # listi af listum af tiles
-        covered = [] # listi af tiles
+        allRegions = [] 
+        covered = [] 
 
         while True :
-            queue = [] # listi af tiles
-            finishedRegion = [] # listi af tiles
+            queue = []
+            finishedRegion = []
             
             # find a tile to start a region, and make sure it's not in some other region
             for tile in borderTileList:
@@ -151,10 +137,10 @@ class SweeperAgent:
                 for cTile in borderTileList:
                     isConnected = False
 
-                    # skif if it's already been assigned to a region
+                    # skip if it's already been assigned to a region
                     if cTile in finishedRegion: continue
                     
-                    # ef að þetta tile er hefur meira en 1 tile á milli sín og upprunalega , þá bara continue
+                    # if there is more than one tile between this tile and the first tile of the region then continue
                     if abs(tile[0] - cTile[0]) > 2 or abs(tile[1] - cTile[1]) > 2: isConnected = False
                     
                     isConnected = self.tileSearch(tile,cTile)
@@ -181,7 +167,7 @@ class SweeperAgent:
         flagCount = 0
         for i in range(len(self.board)):
             for j in range(len(self.board)):
-                # setja hvað eru margir reitir í kringum þennan reit
+
                 if self.board[i][j] == 'F':
                     flagCount += 1
                     continue
@@ -195,29 +181,22 @@ class SweeperAgent:
                 else:
                     surround = 8
                 
-                # if a tile is set to -1 it means that we know that there is not a mine there
-
                 numberOfFlags = self.numberOfTilesAround(i,j, 'F')
-                # kannski ekki numberoftiles(i,j,' ')
-                numberOfEmpty = self.numberOfTilesAround(i,j, 'E') + self.numberOfTilesAround(i,j, ' ')
+                numberOfEmpty = self.numberOfTilesAround(i,j, 'E')
                 
                 if(numberOfFlags > int(self.board[i][j])):
-                    #print("number of flags", numberOfFlags, "number on tile, ", self.board[i][j])
                     return
                 
-                # ekki hundrað á hvað þessi gerir
                 if(surround - numberOfEmpty < int(self.board[i][j])):
                     return
             
         if flagCount > self.bombs: return
 
         if k == len(tileList):
-           # print("komst hingad 2")
             if flagCount < self.bombs and not self.segregate: return
             
             solution = []
             for item in tileList:
-                #print(item)
                 if self.board[item[0]][item[1]] == 'F': solution.append(True)
                 else: solution.append(False)
             self.tankSolutions.append(solution)
@@ -226,12 +205,11 @@ class SweeperAgent:
         currTileI = tileList[k][0]
         currTileJ = tileList[k][1]
 
-
         self.board[currTileI][currTileJ] = 'F'
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
 
-        
+        # E stands for empty, we try to find a solution where this tile is guaranteed empty
         self.board[currTileI][currTileJ] = 'E'
         self.tankRecursive(tileList, k+1)
         self.board[currTileI][currTileJ] = ' '
@@ -307,6 +285,5 @@ class SweeperAgent:
                                 answer = str(x) + str(y) + "f"
                                 return answer
         return self.tankSolver()
-        print("fann ekki lausn ")
 
 

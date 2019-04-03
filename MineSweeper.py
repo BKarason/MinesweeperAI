@@ -146,8 +146,8 @@ def playgame(playCount):
     global wins
     global losses
     clear = lambda: os.system('cls')
-    gridsize = 16
-    numberofmines = 40
+    gridsize = 9
+    numberofmines = 10
     currgrid = [[' ' for i in range(gridsize)] for i in range(gridsize)]
     agent = SweeperAgent(currgrid, numberofmines)
     grid = []
@@ -216,9 +216,6 @@ def playgame(playCount):
             if set(flags) == set(mines):
                 wins += 1
                 print('You Win. ')
-                usedTank = agent.getTankSolver()
-                if usedTank:
-                    print("notaði tank solver")
                 showgrid(grid)
                 # change next line for more or less runs
                 if playCount != 99:
